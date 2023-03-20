@@ -31,7 +31,7 @@ namespace PokemonReview.Controllers
             return Ok(pokemons);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}", Name = "GetPokemonById")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
         [ProducesResponseType(400)]
         public IActionResult getPokemon(int id)
@@ -39,12 +39,28 @@ namespace PokemonReview.Controllers
             if(!_pokemonRepository.PokemonExists(id))
                 return NotFound();
 
-            var pokemons = _mapper.Map<PokemonDto>(_pokemonRepository.GetPokemon(id));
+            var pokemon = _mapper.Map<PokemonDto>(_pokemonRepository.GetPokemon(id));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(pokemons);
+            return Ok(pokemon);
+        }
+
+        [HttpGet("{name}", Name = "GetPokemonByName")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
+        [ProducesResponseType(400)]
+        public IActionResult getPokemon(string name)
+        {
+            var pokemon = _mapper.Map<PokemonDto>(_pokemonRepository.GetPokemon(name));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            if (pokemon == null)
+                return NotFound("This pokemon doesn't exist.");
+
+            return Ok(pokemon);
         }
 
     }
