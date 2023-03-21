@@ -5,6 +5,7 @@ namespace PokemonReview.Interfaces
     public interface ICategoryRepository
     {
         ICollection<Category> GetCategories();
+        Category GetCategory(int id);
         Category GetCategoryByName(string name);
     }
 }
