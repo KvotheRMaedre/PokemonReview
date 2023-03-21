@@ -32,7 +32,7 @@ namespace PokemonReview.Controllers
             return Ok(categories);
         }
 
-        [HttpGet("{name}", Name = "GetCateGoryByName")]
+        [HttpGet("{name}", Name = "GetCategoryByName")]
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
