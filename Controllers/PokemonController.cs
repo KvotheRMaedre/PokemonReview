@@ -34,6 +34,7 @@ namespace PokemonReview.Controllers
         [HttpGet("{id:int}", Name = "GetPokemonById")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public IActionResult getPokemon(int id)
         {
             if(!_pokemonRepository.PokemonExists(id))
@@ -50,6 +51,7 @@ namespace PokemonReview.Controllers
         [HttpGet("{name}", Name = "GetPokemonByName")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public IActionResult getPokemon(string name)
         {
             var pokemon = _mapper.Map<PokemonDto>(_pokemonRepository.GetPokemon(name));
