@@ -31,5 +31,22 @@ namespace PokemonReview.Controllers
 
             return Ok(categories);
         }
+
+        [HttpGet("{name}", Name = "GetCateGoryByName")]
+        [ProducesResponseType(200, Type = typeof(Category))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult getCategoriesByName(string name)
+        {
+            var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategoryByName(name));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (category == null)
+                return NotFound("This category doesn't exist.");
+
+            return Ok(category);
+        }
     }
 }

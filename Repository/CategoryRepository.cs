@@ -18,5 +18,10 @@ namespace PokemonReview.Repository
             return _context.Categories.OrderBy(category => category.Id).ToList();
         }
 
+        public Category GetCategoryByName(string name)
+        {
+            return _context.Categories.Where(category => category.Name == name).FirstOrDefault();
+        }
+
     }
 }
