@@ -74,5 +74,22 @@ namespace PokemonReview.Controllers
             return Ok(reviews);
 
         }
+
+        [HttpGet("pokemon/{pokeId}")]
+        public IActionResult getReviewsOfAPokemon(int pokeId)
+        {
+            var reviews = _mapper.Map<List<ReviewDto>>(_reviewRepository.GetReviewsOfAPokemon(pokeId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (reviews.IsNullOrEmpty())
+                return NotFound("There are no reviews for this pokemon.");
+
+            return Ok(reviews);
+
+        }
+
+
     }
 }

@@ -32,5 +32,10 @@ namespace PokemonReview.Repository
         {
             return _context.Reviews.OrderBy(review => review.Id).ToList();
         }
+
+        public ICollection<Review> GetReviewsOfAPokemon(int pokeId)
+        {
+            return _context.Reviews.Where(review => review.Pokemon.Id == pokeId).ToList();
+        }
     }
 }

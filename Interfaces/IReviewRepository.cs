@@ -8,5 +8,6 @@ namespace PokemonReview.Interfaces
         Review GetReview(int id);
         ICollection<Review> GetReviewByTitle(string title);
         ICollection<Review> GetReviewBySampleText(string text);
+        ICollection<Review> GetReviewsOfAPokemon(int pokeId);
     }
 }
