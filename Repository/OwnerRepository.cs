@@ -31,5 +31,10 @@ namespace PokemonReview.Repository
         {
             return _context.Owners.OrderBy(owner => owner.Id).ToList();
         }
+
+        public ICollection<Pokemon> GetPokemonsByOwner(int ownerId)
+        {
+            return _context.PokemonOwners.Where(po => po.OwnerId == ownerId).Select(p => p.Pokemon).ToList();
+        }
     }
 }

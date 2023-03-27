@@ -8,5 +8,6 @@ namespace PokemonReview.Interfaces
         Owner GetOwner(int id);
         Owner GetOwnerByName(string name);
         Owner GetOwnerByGym(string gym);
+        ICollection<Pokemon> GetPokemonsByOwner(int ownerId);
     }
 }
