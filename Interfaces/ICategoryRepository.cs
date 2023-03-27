@@ -7,5 +7,7 @@ namespace PokemonReview.Interfaces
         ICollection<Category> GetCategories();
         Category GetCategory(int id);
         Category GetCategoryByName(string name);
+
+        ICollection<Pokemon> GetPokemonsByCategory(int categoryId);
     }
 }

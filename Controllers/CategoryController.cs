@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PokemonReview.Dto;
 using PokemonReview.Interfaces;
 using PokemonReview.Models;
@@ -64,6 +65,20 @@ namespace PokemonReview.Controllers
                 return NotFound("This category doesn't exist.");
 
             return Ok(category);
+        }
+
+        [HttpGet("/pokemons/{categoryId}")]
+        public IActionResult getPokemonsByCategory(int categoryId)
+        {
+            var pokemons = _mapper.Map<List<PokemonDto>>(_categoryRepository.GetPokemonsByCategory(categoryId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (pokemons.IsNullOrEmpty())
+                return NotFound("This category doesn't exist or have pokemons in it.");
+
+            return Ok(pokemons);
         }
     }
 }
