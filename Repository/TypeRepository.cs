@@ -1,5 +1,6 @@
 ﻿using PokemonReview.Data;
 using PokemonReview.Interfaces;
+using PokemonReview.Models;
 
 namespace PokemonReview.Repository
 {
@@ -11,6 +12,12 @@ namespace PokemonReview.Repository
         {
             _context = context;
         }
+
+        public ICollection<Pokemon> GetPokemonsByType(int typeId)
+        {
+            return _context.PokemonTypes.Where(pt => pt.TypeId == typeId).Select(pt => pt.Pokemon).ToList();
+        }
+
         public Models.Type GetType(int id)
         {
             return _context.Types.Where(type => type.Id == id).FirstOrDefault();

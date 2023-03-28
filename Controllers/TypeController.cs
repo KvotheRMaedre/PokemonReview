@@ -44,7 +44,7 @@ namespace PokemonReview.Controllers
             return Ok(type);
         }
 
-        [HttpGet("/name={name}")]
+        [HttpGet("name={name}")]
         public IActionResult GetTypeByName(string name)
         {
             var types = _mapper.Map<List<TypeDto>>(_typeRepository.GetTypeByName(name));
@@ -56,6 +56,20 @@ namespace PokemonReview.Controllers
                 return NotFound("There are no types matching the name: " + name);
 
             return Ok(types);
+        }
+
+        [HttpGet("pokemons/{typeId}", Name = "GetPokemonsByType")]
+        public IActionResult GetPokemonsByType(int typeId)
+        {
+            var pokemons = _mapper.Map<List<PokemonDto>>(_typeRepository.GetPokemonsByType(typeId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (pokemons.IsNullOrEmpty())
+                return NotFound("There are no pokemons of this type.");
+
+            return Ok(pokemons);
         }
     }
 }
