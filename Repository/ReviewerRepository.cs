@@ -27,5 +27,10 @@ namespace PokemonReview.Repository
         {
             return _context.Reviewers.OrderBy(reviewer => reviewer.Id).ToList();
         }
+
+        public ICollection<Review> GetReviewsOfAReviewer(int reviewerId)
+        {
+            return _context.Reviews.Where(review => review.Reviewer.Id == reviewerId).ToList();
+        }
     }
 }

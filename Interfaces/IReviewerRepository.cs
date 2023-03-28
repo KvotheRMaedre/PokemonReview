@@ -7,5 +7,6 @@ namespace PokemonReview.Interfaces
         ICollection<Reviewer> GetReviewers();
         Reviewer GetReviewer(int id);
         ICollection<Reviewer> GetReviewerByFirstName(string name);
+        ICollection<Review> GetReviewsOfAReviewer(int reviewerId);
     }
 }

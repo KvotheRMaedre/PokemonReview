@@ -59,5 +59,19 @@ namespace PokemonReview.Controllers
 
             return Ok(reviewer);
         }
+
+        [HttpGet("{reviewerId}/reviews")]
+        public IActionResult GetReviewsOfAReviewer(int reviewerId)
+        {
+            var reviews = _mapper.Map<List<ReviewDto>>(_reviewerRepository.GetReviewsOfAReviewer(reviewerId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (reviews.IsNullOrEmpty())
+                return NotFound("This reviewer doesn't have reviews.");
+
+            return Ok(reviews);
+        }
     }
 }
