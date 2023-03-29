@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PokemonReview.Dto;
 using PokemonReview.Interfaces;
 using PokemonReview.Models;
+using PokemonReview.Repository;
 
 namespace PokemonReview.Controllers
 {
@@ -12,11 +13,13 @@ namespace PokemonReview.Controllers
     public class OwnerController : Controller
     {
         private readonly IOwnerRepository _ownerRepository;
+        private readonly ICountryRepository _countryRepository;
         private readonly IMapper _mapper;
 
-        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper)
+        public OwnerController(IOwnerRepository ownerRepository, ICountryRepository countryRepository, IMapper mapper)
         {
             _ownerRepository = ownerRepository;
+            _countryRepository = countryRepository;
             _mapper = mapper;
         }
 
@@ -85,6 +88,24 @@ namespace PokemonReview.Controllers
                 return NotFound("This person doesn't own pokemons.");
 
             return Ok(pokemons);
+        }
+
+        [HttpPost]
+        public IActionResult PostOwner([FromBody] OwnerPostDto owner)
+        {
+            if (owner == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var ownerMapped = _mapper.Map<Owner>(owner);
+            ownerMapped.Country = _countryRepository.GetCountry(owner.CountryId);
+
+            if (!_ownerRepository.CreateOwner(ownerMapped))
+                return StatusCode(500, "Something went wrong saving this Owner.");
+
+            return CreatedAtAction("GetOwner", new { id = ownerMapped.Id }, ownerMapped);
         }
 
     }

@@ -14,6 +14,7 @@ namespace PokemonReview.Helper
             CreateMap<Country, CountryDto>();
             CreateMap<CountryPostDto, Country>();
             CreateMap<Owner, OwnerDto>();
+            CreateMap<OwnerPostDto, Owner>();
             CreateMap<Review, ReviewDto>();
             CreateMap<Reviewer, ReviewerDto>();
             CreateMap<Models.Type, TypeDto>();

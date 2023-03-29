@@ -9,5 +9,8 @@ namespace PokemonReview.Interfaces
         Owner GetOwnerByName(string name);
         Owner GetOwnerByGym(string gym);
         ICollection<Pokemon> GetPokemonsByOwner(int ownerId);
+        bool CreateOwner(Owner owner);
+        bool OwnerExists(int id);
+        bool Save();
     }
 }
