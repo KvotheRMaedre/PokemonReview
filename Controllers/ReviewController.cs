@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PokemonReview.Dto;
 using PokemonReview.Interfaces;
+using PokemonReview.Models;
+using PokemonReview.Repository;
 
 namespace PokemonReview.Controllers
 {
@@ -11,11 +13,18 @@ namespace PokemonReview.Controllers
     public class ReviewController : Controller
     {
         private readonly IReviewRepository _reviewRepository;
+        private readonly IPokemonRepository _pokemonRepository;
+        private readonly IReviewerRepository _reviewerRepository;
         private readonly IMapper _mapper;
 
-        public ReviewController(IReviewRepository reviewRepository, IMapper mapper)
+        public ReviewController(IReviewRepository reviewRepository,
+                                IPokemonRepository pokemonRepository,
+                                IReviewerRepository reviewerRepository,
+                                IMapper mapper)
         {
             _reviewRepository = reviewRepository;
+            _pokemonRepository = pokemonRepository;
+            _reviewerRepository = reviewerRepository;
             _mapper = mapper;
         }
 
@@ -90,6 +99,28 @@ namespace PokemonReview.Controllers
 
         }
 
+        [HttpPost]
+        public IActionResult PostReview([FromBody] ReviewPostDto review)
+        {
+            if (review == null)
+                return BadRequest(ModelState);
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_pokemonRepository.PokemonExists(review.PokemonId))
+                return StatusCode(422, "This pokemon doens't exists, please check the id and try again.");
+            if (!_reviewerRepository.ReviewerExists(review.ReviewerId))
+                return StatusCode(422, "This reviewer doens't exists, please check the id and try again.");
+
+            var reviewMapped = _mapper.Map<Review>(review);
+            reviewMapped.Pokemon = _pokemonRepository.GetPokemon(review.PokemonId);
+            reviewMapped.Reviewer = _reviewerRepository.GetReviewer(review.ReviewerId);
+
+            if (!_reviewRepository.CreateReview(reviewMapped))
+                return StatusCode(500, "Something went wrong saving this Review.");
+
+            return CreatedAtAction("getReview", new { id = reviewMapped.Id }, reviewMapped);
+        }
     }
 }
