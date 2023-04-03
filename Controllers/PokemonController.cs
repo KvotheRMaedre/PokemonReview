@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReview.Dto;
 using PokemonReview.Interfaces;
 using PokemonReview.Models;
+using PokemonReview.Repository;
 
 namespace PokemonReview.Controllers
 {
@@ -11,11 +12,21 @@ namespace PokemonReview.Controllers
     public class PokemonController : Controller
     {
         private readonly IPokemonRepository _pokemonRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly ITypeRepository _typeRepository;
         private readonly IMapper _mapper;
 
-        public PokemonController(IPokemonRepository pokemonRepository, IMapper mapper)
+        public PokemonController(IPokemonRepository pokemonRepository,
+                                 ICategoryRepository categoryRepository,
+                                 IOwnerRepository ownerRepository,
+                                 ITypeRepository typeRepository,
+                                 IMapper mapper)
         {
             _pokemonRepository = pokemonRepository;
+            _categoryRepository = categoryRepository;
+            _ownerRepository = ownerRepository;
+            _typeRepository = typeRepository;
             _mapper = mapper;
         }
 
@@ -63,6 +74,35 @@ namespace PokemonReview.Controllers
                 return NotFound("This pokemon doesn't exist.");
 
             return Ok(pokemon);
+        }
+
+        [HttpPost]
+        public IActionResult PostPokemon([FromBody] PokemonPostDto pokemon)
+        {
+            if (pokemon == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if(_pokemonRepository.PokemonExists(pokemon.Name))
+                return StatusCode(422, "This pokemon already exists.");
+
+            if (!_categoryRepository.CategoryExists(pokemon.CategoryId))
+                return StatusCode(422, "This category doesn't exist, please check the id and try again.");
+
+            if (!_ownerRepository.OwnerExists(pokemon.OwnerId))
+                return StatusCode(422, "This owner doesn't exist, please check the id and try again.");
+
+            if (!_typeRepository.TypeExists(pokemon.TypeId))
+                return StatusCode(422, "This type doesn't exist, please check the id and try again.");
+
+            var pokemonMapped = _mapper.Map<Pokemon>(pokemon);
+
+            if (!_pokemonRepository.CreatePokemon(pokemonMapped, pokemon.CategoryId, pokemon.OwnerId, pokemon.TypeId))
+                return StatusCode(500, "Something went wrong saving this pokemon.");
+
+            return CreatedAtAction("getPokemon", new { id = pokemonMapped.Id }, pokemonMapped);
         }
 
     }
