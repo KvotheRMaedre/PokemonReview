@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PokemonReview.Dto;
 using PokemonReview.Interfaces;
+using PokemonReview.Models;
 
 namespace PokemonReview.Controllers
 {
@@ -70,6 +71,26 @@ namespace PokemonReview.Controllers
                 return NotFound("There are no pokemons of this type.");
 
             return Ok(pokemons);
+        }
+
+        [HttpPost]
+        public IActionResult PostType([FromBody] TypePostDto type)
+        {
+            if (type == null)
+                return BadRequest(ModelState);
+
+            if (_typeRepository.TypeExists(type.Name))
+                return StatusCode(422, "This type already exists.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var typeMapped = _mapper.Map<Models.Type>(type);
+
+            if (!_typeRepository.CreateType(typeMapped))
+                return StatusCode(500, "Something went wrong saving this type.");
+
+            return CreatedAtAction("GetType", new { id = typeMapped.Id }, typeMapped);
         }
     }
 }
