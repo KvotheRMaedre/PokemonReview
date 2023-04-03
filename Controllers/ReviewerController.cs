@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PokemonReview.Dto;
 using PokemonReview.Interfaces;
 using PokemonReview.Models;
+using PokemonReview.Repository;
 using System.Collections.Generic;
 
 namespace PokemonReview.Controllers
@@ -72,6 +73,23 @@ namespace PokemonReview.Controllers
                 return NotFound("This reviewer doesn't have reviews.");
 
             return Ok(reviews);
+        }
+
+        [HttpPost]
+        public IActionResult PostReviewer([FromBody] ReviewerPostDto reviewer)
+        {
+            if (reviewer == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewerMapped = _mapper.Map<Reviewer>(reviewer);
+
+            if (!_reviewerRepository.CreateReviewer(reviewerMapped))
+                return StatusCode(500, "Something went wrong saving this Review.");
+
+            return CreatedAtAction("GetReviewer", new { id = reviewerMapped.Id }, reviewerMapped);
         }
     }
 }
