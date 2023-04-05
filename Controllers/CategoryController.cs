@@ -101,5 +101,26 @@ namespace PokemonReview.Controllers
 
             return CreatedAtAction("GetCategoryById", new { id = categoryMap.Id }, categoryMap);
         }
+
+        [HttpPut("{categoryId}")]
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryPostDto category)
+        {
+            if (category == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_categoryRepository.CategoryExists(categoryId))
+                return NotFound();
+
+            var categoryMap = _mapper.Map<Category>(category);
+            categoryMap.Id = categoryId;
+
+            if (!_categoryRepository.UpdateCategory(categoryMap))
+                return StatusCode(500, "Something went wrong updating this category.");
+
+            return CreatedAtAction("GetCategoryById", new { id = categoryMap.Id }, categoryMap);
+        }
     }
 }
