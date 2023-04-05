@@ -108,5 +108,27 @@ namespace PokemonReview.Controllers
             return CreatedAtAction("GetOwner", new { id = ownerMapped.Id }, ownerMapped);
         }
 
+        [HttpPut("{ownerId}")]
+        public IActionResult UpdateCategory(int ownerId, [FromBody] OwnerPostDto owner)
+        {
+            if (owner == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_countryRepository.CountryExists(ownerId))
+                return NotFound();
+
+            var ownerMapped = _mapper.Map<Owner>(owner);
+            ownerMapped.Id = ownerId;
+            ownerMapped.Country = _countryRepository.GetCountry(owner.CountryId);
+
+            if (!_ownerRepository.UpdateOwner(ownerMapped))
+                return StatusCode(500, "Something went wrong updating this owner.");
+
+            return CreatedAtAction("GetOwner", new { id = ownerMapped.Id }, ownerMapped);
+        }
+
     }
 }
