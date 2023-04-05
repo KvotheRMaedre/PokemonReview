@@ -9,6 +9,7 @@ namespace PokemonReview.Interfaces
         Country GetCountry(int id);
         Country GetCountryByName(string name);
         bool CreateCountry(Country country);
+        bool UpdateCountry(Country country);
         bool CountryExists(int id);
         bool CountryExists(string name);
         bool Save();
