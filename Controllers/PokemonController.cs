@@ -60,19 +60,19 @@ namespace PokemonReview.Controllers
             return Ok(pokemon);
         }
 
-        [HttpGet("{name}", Name = "GetPokemonByName")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [HttpGet("{name}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Pokemon>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetPokemon(string name)
         {
+            if(!_pokemonRepository.PokemonExists(name))
+                return NotFound();
+            
             var pokemon = _mapper.Map<PokemonDto>(_pokemonRepository.GetPokemon(name));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-            if (pokemon == null)
-                return NotFound("This pokemon doesn't exist.");
 
             return Ok(pokemon);
         }
