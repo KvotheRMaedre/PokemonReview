@@ -31,8 +31,9 @@ namespace PokemonReview.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-        public IActionResult getPokemons()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Pokemon>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetPokemons()
         {
             var pokemons = _mapper.Map<List<PokemonDto>>(_pokemonRepository.GetPokemons());
 
@@ -42,11 +43,11 @@ namespace PokemonReview.Controllers
             return Ok(pokemons);
         }
 
-        [HttpGet("{id:int}", Name = "GetPokemonById")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public IActionResult getPokemon(int id)
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Pokemon>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetPokemon(int id)
         {
             if(!_pokemonRepository.PokemonExists(id))
                 return NotFound();
@@ -63,7 +64,7 @@ namespace PokemonReview.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult getPokemon(string name)
+        public IActionResult GetPokemon(string name)
         {
             var pokemon = _mapper.Map<PokemonDto>(_pokemonRepository.GetPokemon(name));
 
@@ -102,7 +103,7 @@ namespace PokemonReview.Controllers
             if (!_pokemonRepository.CreatePokemon(pokemonMapped, pokemon.CategoryId, pokemon.OwnerId, pokemon.TypeId))
                 return StatusCode(500, "Something went wrong saving this pokemon.");
 
-            return CreatedAtAction("getPokemon", new { id = pokemonMapped.Id }, pokemonMapped);
+            return CreatedAtAction("GetPokemon", new { id = pokemonMapped.Id }, pokemonMapped);
         }
 
     }
