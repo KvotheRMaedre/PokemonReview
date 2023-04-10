@@ -78,6 +78,10 @@ namespace PokemonReview.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Pokemon>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult PostPokemon([FromBody] PokemonPostDto pokemon)
         {
             if (pokemon == null)
@@ -87,21 +91,21 @@ namespace PokemonReview.Controllers
                 return BadRequest(ModelState);
 
             if(_pokemonRepository.PokemonExists(pokemon.Name))
-                return StatusCode(422, "This pokemon already exists.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "This pokemon already exists.");
 
             if (!_categoryRepository.CategoryExists(pokemon.CategoryId))
-                return StatusCode(422, "This category doesn't exist, please check the id and try again.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "This category doesn't exist, please check the id and try again.");
 
             if (!_ownerRepository.OwnerExists(pokemon.OwnerId))
-                return StatusCode(422, "This owner doesn't exist, please check the id and try again.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "This owner doesn't exist, please check the id and try again.");
 
             if (!_typeRepository.TypeExists(pokemon.TypeId))
-                return StatusCode(422, "This type doesn't exist, please check the id and try again.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "This type doesn't exist, please check the id and try again.");
 
             var pokemonMapped = _mapper.Map<Pokemon>(pokemon);
 
             if (!_pokemonRepository.CreatePokemon(pokemonMapped, pokemon.CategoryId, pokemon.OwnerId, pokemon.TypeId))
-                return StatusCode(500, "Something went wrong saving this pokemon.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong saving this pokemon.");
 
             return CreatedAtAction("GetPokemon", new { id = pokemonMapped.Id }, pokemonMapped);
         }
