@@ -22,8 +22,9 @@ namespace PokemonReview.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public IActionResult getCategories()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Category>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetCategories()
         {
             var categories = _mapper.Map<List<CategoryDto>>(_categoryRepository.GetCategories());
 
