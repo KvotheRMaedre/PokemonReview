@@ -51,10 +51,10 @@ namespace PokemonReview.Controllers
             return Ok(category);
         }
 
-        [HttpGet("{name}", Name = "GetCategoryByName")]
-        [ProducesResponseType(200, Type = typeof(Category))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [HttpGet("{name}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Category))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCategory(string name)
         {
             if(!_categoryRepository.CategoryExists(name))
