@@ -55,15 +55,15 @@ namespace PokemonReview.Controllers
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult getCategoryByName(string name)
+        public IActionResult GetCategory(string name)
         {
+            if(!_categoryRepository.CategoryExists(name))
+                return NotFound();
+
             var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategoryByName(name));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            if (category == null)
-                return NotFound("This category doesn't exist.");
 
             return Ok(category);
         }
