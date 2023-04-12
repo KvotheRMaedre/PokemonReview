@@ -34,19 +34,19 @@ namespace PokemonReview.Controllers
             return Ok(categories);
         }
 
-        [HttpGet("{id:int}", Name = "GetCategoryById")]
-        [ProducesResponseType(200, Type = typeof(Category))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public IActionResult GetCategoryById(int id)
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Category))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetCategory(int id)
         {
+            if (!_categoryRepository.CategoryExists(id))
+                return NotFound();
+
             var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategory(id));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            if (category == null)
-                return NotFound("This category doesn't exist.");
 
             return Ok(category);
         }
